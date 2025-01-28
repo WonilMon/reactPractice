@@ -1,8 +1,8 @@
 import "./List.css";
 import TodoItem from "./TodoItem";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 
-const List = ({ todos }) => {
+const List = ({ todos, onUpdate, onDelete }) => {
   const [search, setSearch] = useState("");
 
   const onChangeSearch = (e) => {
@@ -18,10 +18,41 @@ const List = ({ todos }) => {
     );
   };
 
+  // const getAnalyzedData = () => {
+  //   const totalCount = todos.length;
+  //   const doneCount = todos.filter((todo) => todo.isDone).length;
+  //   const notDoneCount = totalCount - doneCount;
+
+  //   return {
+  //     totalCount,
+  //     doneCount,
+  //     notDoneCount,
+  //   };
+  // };
+  // const { totalCount, doneCount, notDoneCount } = getAnalyzedData();
+
+  // 의존성 배열
+  const { totalCount, notDoneCount, doneCount } = useMemo(() => {
+    const totalCount = todos.length;
+    const doneCount = todos.filter((todo) => todo.isDone).length;
+    const notDoneCount = totalCount - doneCount;
+
+    return {
+      totalCount,
+      doneCount,
+      notDoneCount,
+    };
+  }, [todos]);
+
   const filteredTodos = getFilteredData();
   return (
     <div className="List">
       <h4>Todo List</h4>
+
+      <div>total : {totalCount}</div>
+      <div>done : {doneCount}</div>
+      <div>notDone : {notDoneCount}</div>
+
       <input
         value={search}
         onChange={onChangeSearch}
@@ -29,7 +60,14 @@ const List = ({ todos }) => {
       />
       <div className="todos_wrapper">
         {filteredTodos.map((todo) => {
-          return <TodoItem key={todo.id} {...todo} />;
+          return (
+            <TodoItem
+              onUpdate={onUpdate}
+              onDelete={onDelete}
+              key={todo.id}
+              {...todo}
+            />
+          );
         })}
       </div>
     </div>
