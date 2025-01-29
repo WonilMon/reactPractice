@@ -1,9 +1,12 @@
 import "./Editor.css";
-import { useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
+import { TodoDispatchContext } from "../App";
 
-const Editor = ({ onCreate }) => {
+// ({onCreate})로 안받고 context로 받기
+const Editor = () => {
   const [content, setContent] = useState("");
   const contentRef = useRef();
+  const { onCreate } = useContext(TodoDispatchContext);
 
   const onChangeContent = (e) => {
     setContent(e.target.value);
